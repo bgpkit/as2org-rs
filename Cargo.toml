@@ -1,0 +1,20 @@
+[package]
+name = "as2org-rs"
+version = "0.0.1"
+authors = ["Mingwei Zhang <mingwei@bgpkit.com>"]
+edition = "2021"
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/bgpkit/as2org-rs"
+documentation = "https://docs.rs/as2org-rs"
+description = """
+A library helps accessing CAIDA's as-to-organization mapping data.
+"""
+keywords = ["bgp", "bgpkit", "caida", "as2org"]
+
+[dependencies]
+oneio = "0.16.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+regex = "1.10.5"
