@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.0 -- 2025-04-04
+
+This crate is now being used in several production systems, and we now consider this crate stable.
+
+### Highlights
+
+* automatically detect and fix potential latin-1 encoding in parsed Unicode strings
+
 ## v0.1.0 -- 2024-06-24
 
 Initial release of `as2org-rs`.
