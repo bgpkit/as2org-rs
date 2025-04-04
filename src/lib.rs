@@ -199,12 +199,64 @@ impl As2org {
     }
 }
 
+/// Fixes misinterpretation of strings encoded in Latin-1 that were mistakenly decoded as UTF-8.
+///
+/// This function processes a string that may contain characters misinterpreted due to an
+/// incorrect encoding or decoding process. Specifically, it handles cases where Latin-1
+/// characters are represented as two incorrect UTF-8 characters, such as 'Ã' followed
+/// by a secondary byte.
+///
+/// # Arguments
+///
+/// * `input` - A string slice that may contain incorrectly encoded characters.
+///
+/// # Returns
+///
+/// A corrected string with all misinterpreted characters properly fixed or left unchanged
+/// if the pattern doesn't match.
+fn fix_latin1_misinterpretation(input: &str) -> String {
+    let mut result = String::new();
+    let mut chars = input.chars().peekable();
+
+    while let Some(c) = chars.next() {
+        // Check for the pattern of misinterpreted Latin-1 chars
+        if c == 'Ã' && chars.peek().is_some() {
+            let next_char = chars.next().unwrap();
+
+            // Calculate the original Latin-1 character
+            let byte_value = match next_char {
+                '\u{0080}'..='\u{00BF}' => 0xC0 + (next_char as u32 - 0x0080),
+                // Handle other ranges as needed
+                _ => {
+                    // If it doesn't match the pattern, treat as normal chars
+                    result.push(c);
+                    result.push(next_char);
+                    continue;
+                }
+            };
+
+            // Convert to the correct character
+            if let Some(correct_char) = char::from_u32(byte_value) {
+                result.push(correct_char);
+            } else {
+                // Fallback for invalid characters
+                result.push(c);
+                result.push(next_char);
+            }
+        } else {
+            result.push(c);
+        }
+    }
+
+    result
+}
+
 /// parse remote AS2Org file into Vec of DataEntry
 fn parse_as2org_file(path: &str) -> Result<Vec<As2orgJsonEntry>> {
     let mut res: Vec<As2orgJsonEntry> = vec![];
 
     for line in oneio::read_lines(path)? {
-        let line = line?;
+        let line = fix_latin1_misinterpretation(&line?);
         if line.contains(r#""type":"ASN""#) {
             let data = serde_json::from_str::<As2orgJsonAs>(line.as_str());
             match data {
@@ -257,5 +309,6 @@ mod tests {
         dbg!(as2org.get_as_info(400644));
         dbg!(as2org.get_siblings(400644));
         dbg!(as2org.get_siblings(13335));
+        dbg!(as2org.get_siblings(61786));
     }
 }
