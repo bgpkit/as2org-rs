@@ -447,10 +447,10 @@ fn get_all_files_with_dates() -> Result<Vec<(String, NaiveDate)>> {
         .captures_iter(content.as_str())
         .map(|cap| {
             let file = cap[1].to_owned();
-            let date = NaiveDate::parse_from_str(&file[..8], "%Y%m%d").unwrap();
-            (format!("{BASE_URL}/{file}"), date)
+            let date = NaiveDate::parse_from_str(&file[..8], "%Y%m%d")?;
+            Ok((format!("{BASE_URL}/{file}"), date))
         })
-        .collect();
+        .collect::<Result<Vec<_>, chrono::ParseError>>()?;
     res.sort_by_key(|(_, date)| *date);
     Ok(res)
 }
