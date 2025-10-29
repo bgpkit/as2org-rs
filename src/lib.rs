@@ -456,7 +456,9 @@ fn get_all_files_with_dates() -> Result<Vec<(String, NaiveDate)>> {
 }
 fn get_most_recent_data() -> Result<String> {
     let files = get_all_files_with_dates()?;
-    let last_file = files.last().ok_or_else(|| anyhow!("No dataset files found"))?;
+    let last_file = files
+        .last()
+        .ok_or_else(|| anyhow!("No dataset files found"))?;
     Ok(last_file.0.clone())
 }
 
@@ -532,7 +534,7 @@ mod tests {
         // First get an ASN that has siblings
         let _info = as2org.get_as_info(15169).unwrap();
         let siblings = as2org.get_siblings(15169).unwrap();
-        
+
         if siblings.len() > 1 {
             // Test with actual siblings if they exist
             let sibling_asn = siblings.iter().find(|s| s.asn != 15169).unwrap().asn;
@@ -572,7 +574,7 @@ mod tests {
         assert!(files.is_ok());
         let files = files.unwrap();
         assert!(files.len() > 0);
-        
+
         // Verify format of returned data
         for (url, date) in &files {
             assert!(url.starts_with("https://"));
@@ -580,10 +582,10 @@ mod tests {
             // Date should be valid (just checking it's not a default)
             assert!(date.year() >= 2000);
         }
-        
+
         // Verify sorting (dates should be in ascending order)
         for i in 1..files.len() {
-            assert!(files[i].1 >= files[i-1].1);
+            assert!(files[i].1 >= files[i - 1].1);
         }
     }
 
@@ -617,7 +619,7 @@ mod tests {
         let fixed = fix_latin1_misinterpretation(input);
         // The function should convert Ã© to é (Latin-1 0xE9)
         assert!(fixed.len() <= input.len());
-        
+
         // Test with no special characters
         let input = "Normal ASCII string";
         let fixed = fix_latin1_misinterpretation(input);
@@ -628,7 +630,7 @@ mod tests {
     fn test_as2org_as_info_fields() {
         let as2org = get_test_db();
         let info = as2org.get_as_info(15169).unwrap();
-        
+
         // Verify all fields are populated
         assert_eq!(info.asn, 15169);
         assert!(!info.name.is_empty());
@@ -643,12 +645,12 @@ mod tests {
         let as2org = get_test_db();
         let asn = 15169;
         let siblings = as2org.get_siblings(asn).unwrap();
-        
+
         // All siblings should return the same sibling list
         for sibling in &siblings {
             let sibling_siblings = as2org.get_siblings(sibling.asn).unwrap();
             assert_eq!(siblings.len(), sibling_siblings.len());
-            
+
             // All ASNs should be present in both lists
             for s in &siblings {
                 assert!(sibling_siblings.iter().any(|ss| ss.asn == s.asn));
