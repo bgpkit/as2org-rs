@@ -433,12 +433,12 @@ fn parse_as2org_file(path: &str) -> Result<Vec<As2orgJsonEntry>> {
     Ok(res)
 }
 
-/// Returns a vector of tuples containing file names and their corresponding dates for all AS2Org data files.
+/// Returns a vector of tuples containing the full URLs of AS2Org data files and their corresponding dates.
 /// The vector is sorted by dates with the latest date last.
 ///
 /// # Returns
 /// - `Result<Vec<(String, NaiveDate)>>` where each tuple contains:
-///   - String: name of the AS2Org data file
+///   - String: complete URL to the AS2Org data file
 ///   - NaiveDate: date extracted from the file name
 fn get_all_files_with_dates() -> Result<Vec<(String, NaiveDate)>> {
     let data_link: Regex = Regex::new(r".*(\d{8}\.as-org2info\.jsonl\.gz).*")?;
