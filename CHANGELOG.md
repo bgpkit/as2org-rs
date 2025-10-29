@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.0 -- 2025-10-29
+
+### New Features
+
+* Added `As2org::get_all_files_with_dates()` method to list all available dataset files with their dates
+* Added `As2org::get_latest_file_url()` method to get the URL for the latest dataset file
+* Introduced `BASE_URL` constant for CAIDA dataset location, improving code maintainability
+
+### Improvements
+
+* Enhanced rustdoc with comprehensive examples and usage patterns
+* Marked rustdoc examples with `no_run` to prevent unnecessary network calls during doc tests
+* Significantly expanded test suite with 15 comprehensive unit tests covering:
+    - Database initialization and loading
+    - ASN information retrieval (existing and non-existent)
+    - Sibling ASN lookups and consistency checks
+    - Organization mapping validation
+    - Helper function testing
+    - Internal data structure consistency
+* Optimized test suite to minimize data fetching by sharing database instance across tests
+* Improved code documentation and inline comments
+* Updated GitHub CI workflows:
+    - Separated format/documentation checks from build/test/lint into parallel jobs
+    - Added scheduled daily tests to continuously verify library compatibility with CAIDA data
+
+### Bug Fixes
+
+* Fixed regex pattern in `get_most_recent_data()` to use proper digit matching (`\d{8}`)
+* Refactored URL construction to use `BASE_URL` constant for consistency
+
 ## v1.0.0 -- 2025-04-04
 
 This crate is now being used in several production systems, and we now consider this crate stable.
@@ -24,7 +54,7 @@ Initial release of `as2org-rs`.
 The main returning data structure is `As2orgAsInfo`, which contains the following fields:
 
 * `asn`: the AS number
-* `name`: the name provide for the individual AS number
+* `name`: the name provided for the individual AS number
 * `country_code`: the country code of the organization's registration country
 * `org_id`: maps to an organization entry
 * `org_name`: the name of the organization

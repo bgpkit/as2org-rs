@@ -10,18 +10,29 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  format-and-docs:
+    name: Format and Documentation Checks
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Run format check
+        run: cargo fmt --check
 
       - name: Run cargo-readme check
         run: cargo install cargo-readme && cargo readme > TMP_README.md && diff -b TMP_README.md README.md
 
-      - name: Run format check
-        run: cargo fmt --check
+  build-and-test:
+    name: Build, Test, and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
 
       - name: Run clippy
         run: cargo clippy --all-features -- -D warnings
