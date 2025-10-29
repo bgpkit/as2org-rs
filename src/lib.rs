@@ -120,6 +120,8 @@ pub struct As2org {
     org_to_as: HashMap<String, Vec<u32>>,
 }
 
+const BASE_URL: &str = "https://publicdata.caida.org/datasets/as-organizations";
+
 impl As2org {
     pub fn new(data_file_path: Option<String>) -> Result<Self> {
         let entries = match data_file_path {
@@ -286,17 +288,15 @@ fn parse_as2org_file(path: &str) -> Result<Vec<As2orgJsonEntry>> {
 
 /// Get the most recent AS2Org data file from CAIDA
 fn get_most_recent_data() -> Result<String> {
-    let data_link: Regex = Regex::new(r".*(........\.as-org2info\.jsonl\.gz).*")?;
-    let content = oneio::read_to_string("https://publicdata.caida.org/datasets/as-organizations/")?;
+    let data_link: Regex = Regex::new(r".*(\d{8}\.as-org2info\.jsonl\.gz).*")?;
+    let content = oneio::read_to_string(BASE_URL)?;
     let res: Vec<String> = data_link
         .captures_iter(content.as_str())
         .map(|cap| cap[1].to_owned())
         .collect();
     let file = res.last().unwrap().to_string();
 
-    Ok(format!(
-        "https://publicdata.caida.org/datasets/as-organizations/{file}"
-    ))
+    Ok(format!("{BASE_URL}/{file}"))
 }
 
 #[cfg(test)]
