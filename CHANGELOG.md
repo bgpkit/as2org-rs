@@ -21,7 +21,11 @@ All notable changes to this project will be documented in this file.
     - Organization mapping validation
     - Helper function testing
     - Internal data structure consistency
+* Optimized test suite to minimize data fetching by sharing database instance across tests
 * Improved code documentation and inline comments
+* Updated GitHub CI workflows:
+    - Separated format/documentation checks from build/test/lint into parallel jobs
+    - Added scheduled daily tests to continuously verify library compatibility with CAIDA data
 
 ### Bug Fixes
 
