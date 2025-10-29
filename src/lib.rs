@@ -456,7 +456,8 @@ fn get_all_files_with_dates() -> Result<Vec<(String, NaiveDate)>> {
 }
 fn get_most_recent_data() -> Result<String> {
     let files = get_all_files_with_dates()?;
-    Ok(files.last().unwrap().0.clone())
+    let last_file = files.last().ok_or_else(|| anyhow!("No dataset files found"))?;
+    Ok(last_file.0.clone())
 }
 
 #[cfg(test)]
